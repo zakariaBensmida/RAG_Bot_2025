@@ -1,1 +1,12 @@
+# requirements.txt
+fastapi
+uvicorn
+langchain
+langchain-community
+langchain-text-splitters
+llama-cpp-python
+chromadb
+sentence-transformers
+PyMuPDF
+bs4
 
