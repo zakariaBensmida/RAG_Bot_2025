@@ -13,4 +13,4 @@ def generate(question):
     retrieved_docs = retrieve(question)
     context = "\n".join(doc.page_content for doc in retrieved_docs)
     prompt = f"Answer based on context:\n\n{context}\n\nQuestion: {question}\nAnswer:"
-    return llm(prompt)
+    return llm.invoke(prompt)
