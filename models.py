@@ -1,37 +1,33 @@
-
-"""Load Hugging Face Transformers model."""
-
-from transformers import pipeline
+from huggingface_hub import InferenceClient
+from dotenv import load_dotenv
 import os
 
-# Use distilgpt2 for lightweight generation, fetched online
-llm = pipeline(
-    "text-generation",
-    model="distilgpt2",
-    tokenizer="distilgpt2",
-    max_length=1024,
-    max_new_tokens=128,
-    temperature=0.7,
-    top_p=0.9,
-    top_k=50,
-    repetition_penalty=1.2,
-    do_sample=True,
-    pad_token_id=50256,
-    device=-1
-)
+load_dotenv()  # reads .env file
 
-def invoke(prompt):
-    """Wrapper to mimic LangChain LLM invoke."""
+API_TOKEN = os.getenv("HF_API_TOKEN")
+
+client = InferenceClient(token=API_TOKEN)
+
+def invoke(prompt: str) -> str:
+    """
+    Invoke the HuggingFace Inference API for text generation.
+    Returns the generated text (continuation) from the prompt.
+    """
     try:
-        result = llm(
-            prompt,
-            max_length=1024,
-            max_new_tokens=128,
-            top_k=50,
-            repetition_penalty=1.2,
-            truncation=True,
-            clean_up_tokenization_spaces=True
-        )[0]["generated_text"]
-        return result[len(prompt):].strip()
+        response = client.text_generation(
+            model="mistralai/Mistral-7B-Instruct-v0.1",  # You can replace with a better model here
+            inputs=prompt,
+            parameters={
+                "max_new_tokens": 128,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "top_k": 50,
+                "repetition_penalty": 1.2,
+                "do_sample": True,
+            },
+        )
+        # response.generated_text contains prompt + generated text, so we return all text
+        return response.generated_text.strip()
     except Exception as e:
         raise Exception(f"Generation failed: {e}")
+
