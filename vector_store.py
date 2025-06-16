@@ -1,6 +1,4 @@
 
-"""Embeddings & ChromaDB vector store."""
-
 from langchain_community.vectorstores import Chroma
 from langchain_huggingface.embeddings import HuggingFaceEmbeddings
 import logging
@@ -8,7 +6,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 def create_vector_store(docs):
-    """Create a ChromaDB vector store from documents."""
+    """
+    Create a ChromaDB vector store from documents using HuggingFace embeddings.
+    """
     try:
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
         vector_store = Chroma.from_documents(docs, embeddings, persist_directory="data/processed")
